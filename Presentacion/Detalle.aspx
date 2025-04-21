@@ -13,7 +13,7 @@
             <h4 class="text-success mt-3">Precio: <asp:Label ID="lblPrecio" runat="server" /></h4>
             <p class="mt-2">Stock disponible: <asp:Label ID="lblStock" runat="server" /></p>
 
-            <asp:Button ID="btnAgregarCarrito" runat="server" Text="Agregar al carrito" CssClass="btn btn-primary mt-3" OnClick="btnAgregarCarrito_Click" />
+            <asp:Button ID="btnAgregarCarrito" runat="server" Text="Agregar al carrito" CssClass="btn btn-success" OnClick="btnAgregarCarrito_Click" />
         </div>
 
     </div>

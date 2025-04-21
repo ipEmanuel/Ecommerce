@@ -40,7 +40,40 @@ namespace Presentacion
 
         protected void btnAgregarCarrito_Click(object sender, EventArgs e)
         {
+            int id = Convert.ToInt32(Request.QueryString["id"]);
+            ProductoNegocio negocio = new ProductoNegocio();
+            Producto productoSeleccionado = negocio.ObtenerProductoPorId(id);
 
+            List<CarritoItem> carrito = Session["carrito"] as List<CarritoItem>;
+
+            if(carrito == null)
+            {
+                carrito = new List<CarritoItem>();
+            }
+
+            var itemExistente = carrito.FirstOrDefault(i => i.Producto.Id == id);
+
+            if (itemExistente != null)
+            {
+                
+
+                if (itemExistente.Cantidad < productoSeleccionado.Stock)
+                {
+                    itemExistente.Cantidad++;
+                }
+                else
+                {
+                    lblStock.Text = "No hay más stock disponible para este producto.";
+                }
+            }
+            else
+            {
+                carrito.Add(new CarritoItem { Producto = productoSeleccionado, Cantidad = 1 });
+            }
+
+            Session["carrito"] = carrito;
+
+            Response.Redirect("Carrito.aspx");
         }
     }
 }
