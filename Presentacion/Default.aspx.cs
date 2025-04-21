@@ -1,4 +1,5 @@
 ﻿using Negocio;
+using Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,13 @@ namespace Presentacion
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Redirect("Productos.aspx");
+            if (!IsPostBack)
+            {
+                ProductoNegocio negocio = new ProductoNegocio();
+                List<Producto> lista = negocio.ListarProductos();
+                rptInicio.DataSource = lista;
+                rptInicio.DataBind();
+            }
         }
     }
 }

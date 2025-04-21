@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,10 @@ namespace Negocio
         {
             return productoDatos.Listar();
         }
-
+       
+        public Producto ObtenerProductoPorId(int id)
+        {           
+            return productoDatos.ObtenerPorId(id);
+        }
     }
 }
