@@ -32,7 +32,27 @@ namespace Presentacion
             }
             else
             {
+                panelCarrito.Visible = false;
                 lblTotal.Text = "Tu carrito está vacío.";
+            }
+        }
+
+        protected void btnEliminar_Command(object sender, CommandEventArgs e)
+        {
+            int id = int.Parse(e.CommandArgument.ToString());
+
+            List<CarritoItem> carrito = Session["carrito"] as List<CarritoItem>;
+
+            if (carrito != null)
+            {
+                var item = carrito.FirstOrDefault(x => x.Producto.Id == id);
+
+                if (item != null) 
+                {
+                    carrito.Remove(item);
+                }
+                Session["carrito"] = carrito;
+                CargarCarrito();
             }
         }
     }
