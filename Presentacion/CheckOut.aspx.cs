@@ -29,7 +29,7 @@ namespace Presentacion
                 rptCarrito.DataSource = carrito;
                 rptCarrito.DataBind();
 
-           
+
                 lblTotal.Text = "Total: $" + negocio.CalcularTotal(carrito).ToString("N2");
             }
             else
@@ -41,34 +41,47 @@ namespace Presentacion
 
         protected void btnFinalizarCompra_Click(object sender, EventArgs e)
         {
-            List<CarritoItem> carrito = Session["carrito"] as List<CarritoItem>;
-
-            //verifica si el carrito esta vacio
-            if (carrito != null || carrito.Count == 0)
+            if (Session["Carrito"] == null)
             {
                 lblMensaje.Text = "El carrito se encuentra vacio";
                 return;
             }
-            
-            //verifica si no se seleccionaron medios de pago
+
+            List<CarritoItem> carrito = (List<CarritoItem>)Session["Carrito"];
+
             if(string.IsNullOrEmpty(rbMedioPago.SelectedValue))
             {
-                lblMensaje.Text = "Seleccione un medio de pago";
+                lblMensaje.Text = "Seleccione el medio de pago";
                 return;
             }
 
-            string medioPago = rbMedioPago.SelectedValue;
-            decimal total = carrito.Sum(i => i.Producto.Precio * i.Cantidad);
+            Pedido pedido = new Pedido
+            {
+                FechaPedido = DateTime.Now,
+                MedioPago = rbMedioPago.SelectedValue,
+                Total = carrito.Sum(ci => ci.Producto.Precio * ci.Cantidad),
 
-            lblMensaje.CssClass = "text-success mt-2 d-block";
+                Detalles = carrito.Select(ci => new PedidoDetalle
+                {
+                    IdProducto = ci.Producto.Id,
+                    Cantidad = ci.Cantidad,
+                    PrecioUnitario = ci.Producto.Precio
+                }).ToList()
+            };
 
-            lblMensaje.Text = $"Compra finalizada. Medio de pago: {medioPago}. Total: ${total:N2}";
+            PedidoNegocio negocio = new PedidoNegocio();
 
-            //vacia el carrito
-            Session["carrito"] = null;
-            rptCarrito.DataSource = null;
-            rptCarrito.DataBind();
-            lblTotal.Text = "";
+            int idPedido = negocio.GuardarPedido(pedido);
+
+            if (idPedido > 0)
+            {
+                Session["Carrito"] = null;
+                Response.Redirect("Confirmacion.aspx?id=" + idPedido);
+            }
+            else
+            {
+                lblMensaje.Text = "Error al procesar el pedido. Intente nuevamente.";
+            }
         }
     }
 }
