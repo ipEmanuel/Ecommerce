@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 
 namespace Presentacion
 {
-    public partial class Carrito : System.Web.UI.Page
+    public partial class CheckOut : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -18,6 +18,7 @@ namespace Presentacion
                 CargarCarrito();
             }
         }
+
         private void CargarCarrito()
         {
             CarritoNegocio negocio = new CarritoNegocio();
@@ -28,7 +29,7 @@ namespace Presentacion
                 rptCarrito.DataSource = carrito;
                 rptCarrito.DataBind();
 
-
+           
                 lblTotal.Text = "Total: $" + negocio.CalcularTotal(carrito).ToString("N2");
             }
             else
@@ -38,28 +39,36 @@ namespace Presentacion
             }
         }
 
-        protected void btnEliminar_Command(object sender, CommandEventArgs e)
+        protected void btnFinalizarCompra_Click(object sender, EventArgs e)
         {
-            int id = int.Parse(e.CommandArgument.ToString());
-
             List<CarritoItem> carrito = Session["carrito"] as List<CarritoItem>;
 
-            if (carrito != null)
+            //verifica si el carrito esta vacio
+            if (carrito != null || carrito.Count == 0)
             {
-                var item = carrito.FirstOrDefault(x => x.Producto.Id == id);
-
-                if (item != null) 
-                {
-                    carrito.Remove(item);
-                }
-                Session["carrito"] = carrito;
-                CargarCarrito();
+                lblMensaje.Text = "El carrito se encuentra vacio";
+                return;
             }
-        }
+            
+            //verifica si no se seleccionaron medios de pago
+            if(string.IsNullOrEmpty(rbMedioPago.SelectedValue))
+            {
+                lblMensaje.Text = "Seleccione un medio de pago";
+                return;
+            }
 
-        protected void btnIrACheckout_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("CheckOut.aspx");
+            string medioPago = rbMedioPago.SelectedValue;
+            decimal total = carrito.Sum(i => i.Producto.Precio * i.Cantidad);
+
+            lblMensaje.CssClass = "text-success mt-2 d-block";
+
+            lblMensaje.Text = $"Compra finalizada. Medio de pago: {medioPago}. Total: ${total:N2}";
+
+            //vacia el carrito
+            Session["carrito"] = null;
+            rptCarrito.DataSource = null;
+            rptCarrito.DataBind();
+            lblTotal.Text = "";
         }
     }
 }

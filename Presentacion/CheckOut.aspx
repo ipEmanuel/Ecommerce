@@ -1,6 +1,7 @@
-﻿<%@ Page Title="Carrito" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Carrito.aspx.cs" Inherits="Presentacion.Carrito" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CheckOut.aspx.cs" Inherits="Presentacion.CheckOut" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-	<h2 class="mt-4 mb-4">Carrito de Compras</h2>
+
+	<h2 class="mt-4 mb-4">Resumen de Compras</h2>
 
     <asp:Panel ID="panelCarrito" runat="server">
         <asp:Repeater ID="rptCarrito" runat="server">
@@ -18,8 +19,7 @@
                             <p class="card-text">Precio: $<%# Eval("Producto.Precio", "{0:N2}") %></p>
                             <p class="card-text">Cantidad: <%# Eval("Cantidad") %></p>
                             <p class="card-text fw-bold">Subtotal: $<%# ((decimal)Eval("Producto.Precio") * (int)Eval("Cantidad")).ToString("N2") %></p>
-
-                            <asp:Button ID="btnEliminar" runat="server" Text="Eliminar" CssClass="btn btn-danger" CommandArgument='<%# Eval("Producto.Id")%>' OnCommand="btnEliminar_Command"/>                                  
+                            
 
                         </div>
                     </div>
@@ -30,12 +30,23 @@
                 </div>
             </FooterTemplate>
         </asp:Repeater><%--Fin Repeater--%>
+        <asp:Label ID="lblTotal" runat="server" CssClass="fw-bold fs-5 mt-4 d-block"></asp:Label>
+        <hr />
+        <!--Medios de Pago -->
+        <asp:Label ID="lblPago" runat="server" Text="Selecciona un medio de pago: " />
+        <br />
+
+        <asp:RadioButtonList ID="rbMedioPago" runat="server">
+            <asp:ListItem Text="Efectivo" Value="Efectivo" />
+            <asp:ListItem Text="Mercado Pago" Value="MercadoPago" />
+        </asp:RadioButtonList>
+
+        
+
+        <asp:Button ID="btnFinalizarCompra" runat="server" Text="Finalizar Compra" CssClass="btn btn-primary mt-3" OnClick="btnFinalizarCompra_Click" /> 
+        <asp:Label ID="lblMensaje" runat="server" CssClass="text-danger mt-2 d-block" />
     </asp:Panel>
-    <asp:Button ID="btnIrACheckout" runat="server" Text="Finalizar compra" CssClass="btn btn-success mt-3" OnClick="btnIrACheckout_Click" />
 
-    <asp:Label ID="lblTotal" runat="server" CssClass="fw-bold fs-5 mt-4 d-block"></asp:Label>	
 </asp:Content>
-
 <asp:Content ID="Content2" ContentPlaceHolderID="head" runat="server">
-	
 </asp:Content>
